@@ -27,7 +27,7 @@ export default function PlayerView() {
   const seekTime = parseFloat(params.get('seek') || '0') || 0
 
   // M3U8 净化：开启后播放列表走服务端清洗，视频分片仍由浏览器直连源站
-  const purifyEnabled = store.settings.m3u8Purify !== false
+  const purifyEnabled = store.settings.m3u8Purify === true
   const isM3u8 = /\.m3u8(?:$|[?#])/i.test(videoUrl)
   const playUrl =
     purifyEnabled && isM3u8 && !videoUrl.includes('/api/m3u8/purify')

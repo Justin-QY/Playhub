@@ -152,7 +152,7 @@ export const useStore = create((set, get) => ({
   liveSummary: null,
 
   settings: loadLS(SETTINGS_KEY, {
-    searchScope: 'all', liveSourceUrl: '', liveEpgUrl: '', m3u8Purify: true,
+    searchScope: 'all', liveSourceUrl: '', liveEpgUrl: '', m3u8Purify: false,
     aiEnabled: false, aiUrl: '', aiKey: '', aiModel: '',
   }),
 
@@ -165,7 +165,7 @@ export const useStore = create((set, get) => ({
   async bootstrap() {
     try {
       const settings = loadLS(SETTINGS_KEY, {
-        searchScope: 'all', liveSourceUrl: '', liveEpgUrl: '', m3u8Purify: true,
+        searchScope: 'all', liveSourceUrl: '', liveEpgUrl: '', m3u8Purify: false,
         aiEnabled: false, aiUrl: '', aiKey: '', aiModel: '',
       })
       const configUrl = localStorage.getItem('playhub:configUrl') || DEFAULT_CONFIG_URL

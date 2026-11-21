@@ -228,7 +228,7 @@ export default function SettingsDrawer({ onClose }) {
       <Form layout="vertical">
         <Form.Item label="M3U8 净化">
           <Switch
-            checked={store.settings.m3u8Purify !== false}
+            checked={store.settings.m3u8Purify === true}
             onChange={(v) => store.updateSettings({ m3u8Purify: v })}
           />
           <Text type="secondary" style={{ marginLeft: 12, fontSize: 13 }}>

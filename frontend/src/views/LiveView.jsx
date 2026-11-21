@@ -79,7 +79,7 @@ export default function LiveView() {
 
   const currentChannel = liveChannels.find((c) => c.id === currentLiveChannelId)
   const currentSource = currentChannel?.sources?.[currentLiveSourceIndex]
-  const purifyEnabled = store.settings.m3u8Purify !== false
+  const purifyEnabled = store.settings.m3u8Purify === true
   const liveRawUrl = currentSource?.url || ''
   const livePlayUrl =
     purifyEnabled && /\.m3u8/i.test(liveRawUrl) && !liveRawUrl.includes('/api/m3u8/purify')
