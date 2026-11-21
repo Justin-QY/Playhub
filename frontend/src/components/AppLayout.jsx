@@ -45,6 +45,12 @@ export default function AppLayout({ children }) {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  useEffect(() => {
+    const openSettings = () => setSettingsOpen(true)
+    window.addEventListener('qymovie:open-settings', openSettings)
+    return () => window.removeEventListener('qymovie:open-settings', openSettings)
+  }, [])
+
   const isPlayerPage = location.pathname === '/player'
 
   if (isPlayerPage) {
@@ -57,7 +63,7 @@ export default function AppLayout({ children }) {
 
   if (error) {
     return (
-      <Layout style={{ minHeight: '100vh', background: '#f5f8ff' }}>
+      <Layout style={{ minHeight: '100vh', background: '#f8f6ff' }}>
         <Content style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center', padding: 40 }}>
             <Title level={3} style={{ color: '#ff4d4f' }}>加载出错</Title>
@@ -101,23 +107,14 @@ export default function AppLayout({ children }) {
             }}
             onClick={() => navigate('/')}
           >
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 10,
-                background: 'linear-gradient(135deg, #1677ff, #4096ff)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <PlayCircleOutlined style={{ color: '#fff', fontSize: 20 }} />
-            </div>
+            <img
+              src={`${import.meta.env.BASE_URL}qymovie.svg`}
+              alt="QY MOVIE"
+              style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0 }}
+            />
             {!collapsed && (
-              <Text strong style={{ fontSize: 18, color: '#1a1a2e', letterSpacing: -0.5 }}>
-                PlayHub
+              <Text strong style={{ fontSize: 16, color: '#1a1a2e', letterSpacing: 0.2 }}>
+                QY MOVIE
               </Text>
             )}
           </div>
@@ -145,7 +142,7 @@ export default function AppLayout({ children }) {
                 {history.length > 0 && (
                   <span style={{
                     marginLeft: 8,
-                    background: '#1677ff',
+                    background: '#7c3aed',
                     color: '#fff',
                     borderRadius: 10,
                     padding: '0 6px',
@@ -188,20 +185,12 @@ export default function AppLayout({ children }) {
             }}
           >
             <Space>
-              <div
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 8,
-                  background: 'linear-gradient(135deg, #1677ff, #4096ff)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <PlayCircleOutlined style={{ color: '#fff', fontSize: 18 }} />
-              </div>
-              <Text strong style={{ fontSize: 16 }}>PlayHub</Text>
+              <img
+                src={`${import.meta.env.BASE_URL}qymovie.svg`}
+                alt="QY MOVIE"
+                style={{ width: 32, height: 32, borderRadius: 8 }}
+              />
+              <Text strong style={{ fontSize: 16 }}>QY MOVIE</Text>
             </Space>
             <Space>
               <Button type="text" icon={<SettingOutlined />} onClick={() => setSettingsOpen(true)} />
@@ -266,8 +255,8 @@ export default function AppLayout({ children }) {
                   padding: '4px 12px',
                   borderRadius: 8,
                   cursor: 'pointer',
-                  color: location.pathname === item.key ? '#1677ff' : '#6b7280',
-                  background: location.pathname === item.key ? '#e6f4ff' : 'transparent',
+                  color: location.pathname === item.key ? '#7c3aed' : '#6b7280',
+                  background: location.pathname === item.key ? '#f1ecff' : 'transparent',
                   transition: 'all 0.2s ease',
                 }}
               >

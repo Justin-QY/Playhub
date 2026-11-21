@@ -131,9 +131,9 @@ export default function HomeView() {
             style={{
               marginTop: 12,
               padding: '14px 18px',
-              background: '#e6f4ff',
+              background: '#f1ecff',
               borderRadius: 12,
-              border: '1px solid #91caff',
+              border: '1px solid #c4b5fd',
               display: 'flex',
               alignItems: 'center',
               gap: 12,
@@ -171,14 +171,14 @@ export default function HomeView() {
             style={{
               marginTop: 12,
               padding: '10px 16px',
-              background: '#f0f5ff',
+              background: '#f7f4ff',
               borderRadius: 10,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}
           >
-            <Text style={{ fontSize: 13, color: '#1677ff' }}>
+            <Text style={{ fontSize: 13, color: '#7c3aed' }}>
               搜索 "{searchKeyword}" 的结果 · {wallVideos.length} 个视频
             </Text>
             <Button type="link" size="small" onClick={handleClearSearch}>
@@ -217,15 +217,27 @@ export default function HomeView() {
         </div>
       ) : !configUrl && sources.length === 0 ? (
         <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
           description={
-            <span>
-              未配置数据源
-              <br />
-              <Text type="secondary" style={{ fontSize: 13 }}>请在设置中加载 TVBox 配置</Text>
-            </span>
+            <div style={{ maxWidth: 440, margin: '0 auto' }}>
+              <div style={{ fontSize: 16, fontWeight: 600, color: '#1a1a2e', marginBottom: 6 }}>
+                还没有加载片源
+              </div>
+              <Text type="secondary" style={{ fontSize: 13, lineHeight: 1.7 }}>
+                QY MOVIE 不内置片源。填入任意一份 TVBox 配置地址，就能搜索、收藏和播放。
+              </Text>
+            </div>
           }
-          style={{ padding: '80px 0', background: '#fff', borderRadius: 20, border: '1px solid #f0f0f0' }}
-        />
+          style={{ padding: '72px 0', background: '#fff', borderRadius: 20, border: '1px solid #f0f0f0' }}
+        >
+          <Button
+            type="primary"
+            size="large"
+            onClick={() => window.dispatchEvent(new Event('qymovie:open-settings'))}
+          >
+            配置片源
+          </Button>
+        </Empty>
       ) : wallVideos.length === 0 ? (
         <Empty
           description={

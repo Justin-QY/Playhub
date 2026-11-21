@@ -9,6 +9,8 @@ const HISTORY_KEY = 'playhub:history'
 const SETTINGS_KEY = 'playhub:settings'
 const CONFIG_HISTORY_KEY = 'playhub:config-history'
 const SEARCH_HISTORY_KEY = 'playhub:search-history'
+// 首次打开自动加载的默认片源（QY 侧已筛选出可用的线路）
+const DEFAULT_CONFIG_URL = 'https://www.qyder.com/qymovie-config.json'
 const MAX_HISTORY = 120
 const MAX_SEARCH_HISTORY = 20
 const groupLinesCache = new Map()
@@ -150,7 +152,7 @@ export const useStore = create((set, get) => ({
   liveSummary: null,
 
   settings: loadLS(SETTINGS_KEY, {
-    searchScope: 'all', liveSourceUrl: '', liveEpgUrl: '',
+    searchScope: 'all', liveSourceUrl: '', liveEpgUrl: '', m3u8Purify: true,
     aiEnabled: false, aiUrl: '', aiKey: '', aiModel: '',
   }),
 
@@ -163,10 +165,10 @@ export const useStore = create((set, get) => ({
   async bootstrap() {
     try {
       const settings = loadLS(SETTINGS_KEY, {
-        searchScope: 'all', liveSourceUrl: '', liveEpgUrl: '',
+        searchScope: 'all', liveSourceUrl: '', liveEpgUrl: '', m3u8Purify: true,
         aiEnabled: false, aiUrl: '', aiKey: '', aiModel: '',
       })
-      const configUrl = localStorage.getItem('playhub:configUrl') || ''
+      const configUrl = localStorage.getItem('playhub:configUrl') || DEFAULT_CONFIG_URL
       const selectedSourceUid = localStorage.getItem('playhub:selectedSourceUid') || ''
       set({ settings, configUrl, selectedSourceUid, bootstrapped: true })
       if (configUrl) {

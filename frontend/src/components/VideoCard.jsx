@@ -59,8 +59,8 @@ export default function VideoCard({ video, onClick, style, index = 0 }) {
               </div>
             )}
             {error && (
-              <div style={{ width: '100%', aspectRatio: '2/3', background: 'linear-gradient(135deg, #e6f4ff, #f0f5ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
-                <PlayCircleOutlined style={{ fontSize: 32, color: '#91caff' }} />
+              <div style={{ width: '100%', aspectRatio: '2/3', background: 'linear-gradient(135deg, #f1ecff, #f7f4ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
+                <PlayCircleOutlined style={{ fontSize: 32, color: '#c4b5fd' }} />
                 <Text type="secondary" style={{ fontSize: 12 }}>暂无封面</Text>
               </div>
             )}

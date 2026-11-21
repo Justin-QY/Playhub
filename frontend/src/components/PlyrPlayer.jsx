@@ -38,7 +38,7 @@ const PlyrPlayer = forwardRef(({ url, poster, onTimeUpdate, onError, onReady, st
     if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null }
     if (playerRef.current) { playerRef.current.destroy(); playerRef.current = null }
 
-    const isHls = url.includes('.m3u8')
+    const isHls = url.includes('.m3u8') || url.includes('/api/m3u8/purify')
     let destroyed = false
     let errorCount = 0
 

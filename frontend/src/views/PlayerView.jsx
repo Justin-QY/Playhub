@@ -26,6 +26,14 @@ export default function PlayerView() {
   const isGroup = params.get('group') === '1'
   const seekTime = parseFloat(params.get('seek') || '0') || 0
 
+  // M3U8 净化：开启后播放列表走服务端清洗，视频分片仍由浏览器直连源站
+  const purifyEnabled = store.settings.m3u8Purify !== false
+  const isM3u8 = /\.m3u8(?:$|[?#])/i.test(videoUrl)
+  const playUrl =
+    purifyEnabled && isM3u8 && !videoUrl.includes('/api/m3u8/purify')
+      ? `${import.meta.env.BASE_URL}api/m3u8/purify?url=${encodeURIComponent(videoUrl)}`
+      : videoUrl
+
   const [speedBoost, setSpeedBoost] = useState(false)
   const [playerKey, setPlayerKey] = useState(0)
   const longPressTimer = useRef(null)
@@ -173,7 +181,7 @@ export default function PlayerView() {
           <div style={{ position: 'relative', width: '100%', maxWidth: 1200 }}>
             <PlyrPlayer
               key={playerKey}
-              url={videoUrl}
+              url={playUrl}
               style={{ borderRadius: 12, overflow: 'hidden' }}
             />
             {speedBoost && (

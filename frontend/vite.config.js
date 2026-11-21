@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
+  // 线上挂在 https://sp.qyder.com/ 根路径
+  base: '/',
   plugins: [react()],
   server: {
     port: 3000,

@@ -10,9 +10,9 @@ initMessageHandler()
 
 const theme = {
   token: {
-    colorPrimary: '#1677ff',
+    colorPrimary: '#7c3aed',
     colorBgContainer: '#ffffff',
-    colorBgLayout: '#f5f8ff',
+    colorBgLayout: '#f8f6ff',
     colorBgElevated: '#ffffff',
     colorText: '#1a1a2e',
     colorTextSecondary: '#6b7280',
@@ -22,7 +22,7 @@ const theme = {
     fontFamily: "'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif",
     fontSize: 14,
     controlHeight: 40,
-    colorLink: '#1677ff',
+    colorLink: '#7c3aed',
     colorSuccess: '#52c41a',
     colorWarning: '#faad14',
     colorError: '#ff4d4f',

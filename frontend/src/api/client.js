@@ -2,7 +2,8 @@ import axios from 'axios'
 import { message } from 'antd'
 
 const client = axios.create({
-  baseURL: '/',
+  // 站点挂在子路径下（/movie/），接口请求也要带上同一前缀
+  baseURL: import.meta.env.BASE_URL,
   timeout: 90000,
   withCredentials: true,
 })

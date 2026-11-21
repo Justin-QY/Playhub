@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { Form, Input, Button, Select, Space, Divider, Typography, message, List, Popconfirm, AutoComplete, Switch, Modal } from 'antd'
-import { DeleteOutlined, LinkOutlined, HistoryOutlined, ClockCircleOutlined, RobotOutlined, CheckCircleOutlined, CloseCircleOutlined, LoadingOutlined, ExportOutlined, ImportOutlined, LockOutlined } from '@ant-design/icons'
+import { DeleteOutlined, LinkOutlined, HistoryOutlined, ClockCircleOutlined, RobotOutlined, CheckCircleOutlined, CloseCircleOutlined, LoadingOutlined, ExportOutlined, ImportOutlined, LockOutlined, FilterOutlined } from '@ant-design/icons'
 import { useStore } from '../stores/useStore'
 
 const { Text, Title } = Typography
@@ -185,7 +185,7 @@ export default function SettingsDrawer({ onClose }) {
             dataSource={store.configHistory}
             renderItem={(url) => (
               <List.Item
-                style={{ padding: '8px 12px', borderRadius: 8, marginBottom: 4, background: store.configUrl === url ? '#e6f4ff' : '#fafafa', border: store.configUrl === url ? '1px solid #91caff' : '1px solid #f0f0f0', cursor: 'pointer', transition: 'all 0.2s ease' }}
+                style={{ padding: '8px 12px', borderRadius: 8, marginBottom: 4, background: store.configUrl === url ? '#f1ecff' : '#fafafa', border: store.configUrl === url ? '1px solid #c4b5fd' : '1px solid #f0f0f0', cursor: 'pointer', transition: 'all 0.2s ease' }}
                 onClick={() => { setConfigInput(url); handleLoadConfig(url) }}
                 actions={[
                   <Popconfirm title="确定删除？" onConfirm={(e) => { e?.stopPropagation(); store.removeConfigHistory(url) }} onCancel={(e) => e?.stopPropagation()}>
@@ -216,6 +216,24 @@ export default function SettingsDrawer({ onClose }) {
               { label: '当前源', value: 'current' },
             ]}
           />
+        </Form.Item>
+      </Form>
+
+      <Divider />
+
+      <Title level={5} style={{ marginBottom: 16 }}>
+        <FilterOutlined style={{ marginRight: 8 }} />
+        播放设置
+      </Title>
+      <Form layout="vertical">
+        <Form.Item label="M3U8 净化">
+          <Switch
+            checked={store.settings.m3u8Purify !== false}
+            onChange={(v) => store.updateSettings({ m3u8Purify: v })}
+          />
+          <Text type="secondary" style={{ marginLeft: 12, fontSize: 13 }}>
+            自动过滤播放列表中的广告分片与广告标记
+          </Text>
         </Form.Item>
       </Form>
 
@@ -320,10 +338,10 @@ export default function SettingsDrawer({ onClose }) {
                 style={{
                   padding: '6px 12px',
                   borderRadius: 8,
-                  background: store.selectedSourceUid === s.uid ? '#e6f4ff' : '#f5f5f5',
-                  border: `1px solid ${store.selectedSourceUid === s.uid ? '#91caff' : '#e8e8e8'}`,
+                  background: store.selectedSourceUid === s.uid ? '#f1ecff' : '#f5f5f5',
+                  border: `1px solid ${store.selectedSourceUid === s.uid ? '#c4b5fd' : '#e8e8e8'}`,
                   fontSize: 13,
-                  color: store.selectedSourceUid === s.uid ? '#1677ff' : '#666',
+                  color: store.selectedSourceUid === s.uid ? '#7c3aed' : '#666',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                 }}

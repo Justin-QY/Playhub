@@ -280,11 +280,11 @@ export default function DetailView() {
               )}
 
               {groupLoading && !aiDetailProcessing && (
-                <div style={{ padding: '14px 18px', background: '#e6f4ff', borderRadius: 12, border: '1px solid #91caff', display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ padding: '14px 18px', background: '#f1ecff', borderRadius: 12, border: '1px solid #c4b5fd', display: 'flex', alignItems: 'center', gap: 12 }}>
                   <Spin size="small" />
                   <div style={{ flex: 1 }}>
                     <Text style={{ fontWeight: 500 }}>正在获取源信息 {fetchProgress.done}/{fetchProgress.total}...</Text>
-                    {fetchProgress.total > 0 && <Progress percent={Math.round((fetchProgress.done / fetchProgress.total) * 100)} size="small" strokeColor="#1677ff" showInfo={false} style={{ marginTop: 4 }} />}
+                    {fetchProgress.total > 0 && <Progress percent={Math.round((fetchProgress.done / fetchProgress.total) * 100)} size="small" strokeColor="#7c3aed" showInfo={false} style={{ marginTop: 4 }} />}
                   </div>
                 </div>
               )}

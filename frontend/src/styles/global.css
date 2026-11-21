@@ -7,15 +7,15 @@
 }
 
 :root {
-  --color-primary: #1677ff;
-  --color-primary-light: #4096ff;
-  --color-primary-dark: #0958d9;
-  --color-primary-bg: #e6f4ff;
-  --color-primary-bg-hover: #bae0ff;
+  --color-primary: #7c3aed;
+  --color-primary-light: #a78bfa;
+  --color-primary-dark: #6d28d9;
+  --color-primary-bg: #f1ecff;
+  --color-primary-bg-hover: #ddd6fe;
   --color-success: #52c41a;
   --color-warning: #faad14;
   --color-error: #ff4d4f;
-  --color-bg: #f5f8ff;
+  --color-bg: #f8f6ff;
   --color-bg-container: #ffffff;
   --color-bg-elevated: #ffffff;
   --color-text: #1a1a2e;
@@ -196,7 +196,7 @@ body {
 }
 
 .hero-gradient {
-  background: linear-gradient(135deg, #e6f4ff 0%, #f0f5ff 50%, #fff1f0 100%);
+  background: linear-gradient(135deg, #f1ecff 0%, #f7f4ff 50%, #fff1f0 100%);
 }
 
 .text-gradient {
@@ -282,4 +282,49 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ---------- 移动端适配：避免搜索框与卡片撑破视口 ---------- */
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.ant-input-search .ant-input-group {
+  display: flex;
+  flex-wrap: nowrap;
+  min-width: 0;
+  width: 100%;
+}
+
+.ant-input-search .ant-input-group .ant-input {
+  min-width: 0;
+  flex: 1 1 auto;
+  width: auto;
+}
+
+.ant-input-search .ant-input-group-addon {
+  flex: none;
+  width: auto;
+}
+
+@media (max-width: 640px) {
+  .ant-input-search .ant-input-group-addon .ant-btn {
+    padding-inline: 12px;
+  }
+}
+/* AutoComplete 包裹 Input.Search 时，选择器内部要被允许收缩 */
+.ant-select .ant-select-selector {
+  min-width: 0;
+}
+
+.ant-select .ant-select-selection-search,
+.ant-select .ant-select-selection-wrap {
+  min-width: 0;
+}
+
+.ant-select .ant-select-selector .ant-input-group-wrapper {
+  width: 100%;
 }

@@ -132,13 +132,13 @@ export default function HistoryView() {
                     style={{
                       width: '100%',
                       aspectRatio: '2/3',
-                      background: 'linear-gradient(135deg, #e6f4ff, #f0f5ff)',
+                      background: 'linear-gradient(135deg, #f1ecff, #f7f4ff)',
                       display: entry.poster ? 'none' : 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <PlayCircleOutlined style={{ fontSize: 40, color: '#91caff' }} />
+                    <PlayCircleOutlined style={{ fontSize: 40, color: '#c4b5fd' }} />
                   </div>
                   {entry.episodeName && (
                     <span className="remarks-badge">

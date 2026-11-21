@@ -79,6 +79,12 @@ export default function LiveView() {
 
   const currentChannel = liveChannels.find((c) => c.id === currentLiveChannelId)
   const currentSource = currentChannel?.sources?.[currentLiveSourceIndex]
+  const purifyEnabled = store.settings.m3u8Purify !== false
+  const liveRawUrl = currentSource?.url || ''
+  const livePlayUrl =
+    purifyEnabled && /\.m3u8/i.test(liveRawUrl) && !liveRawUrl.includes('/api/m3u8/purify')
+      ? `${import.meta.env.BASE_URL}api/m3u8/purify?url=${encodeURIComponent(liveRawUrl)}`
+      : liveRawUrl
   const programmes = currentChannel?.programmes || []
   const currentProgramme = getCurrentProgramme(programmes)
   const nextProgramme = getNextProgramme(programmes)
@@ -138,7 +144,7 @@ export default function LiveView() {
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ background: '#fff', borderRadius: 20, padding: '20px 24px', marginBottom: 20, border: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <VideoCameraOutlined style={{ fontSize: 24, color: '#1677ff' }} />
+          <VideoCameraOutlined style={{ fontSize: 24, color: '#7c3aed' }} />
           <div>
             <Title level={4} style={{ margin: 0 }}>电视直播</Title>
             <Text type="secondary" style={{ fontSize: 13 }}>{liveChannels.length} 个频道 · {liveGroups.length} 个分组</Text>
@@ -167,12 +173,12 @@ export default function LiveView() {
               {filteredChannels.map((ch) => {
                 const prog = getCurrentProgramme(ch.programmes)
                 return (
-                  <div key={ch.id} onClick={() => store.selectLiveChannel(ch.id)} style={{ padding: '12px 16px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0', background: currentLiveChannelId === ch.id ? '#e6f4ff' : 'transparent', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 10, background: currentLiveChannelId === ch.id ? '#1677ff' : '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div key={ch.id} onClick={() => store.selectLiveChannel(ch.id)} style={{ padding: '12px 16px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0', background: currentLiveChannelId === ch.id ? '#f1ecff' : 'transparent', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: currentLiveChannelId === ch.id ? '#7c3aed' : '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <SoundOutlined style={{ fontSize: 16, color: currentLiveChannelId === ch.id ? '#fff' : '#999' }} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <Text strong={currentLiveChannelId === ch.id} style={{ display: 'block', color: currentLiveChannelId === ch.id ? '#1677ff' : '#333', fontSize: 14 }}>{ch.name}</Text>
+                      <Text strong={currentLiveChannelId === ch.id} style={{ display: 'block', color: currentLiveChannelId === ch.id ? '#7c3aed' : '#333', fontSize: 14 }}>{ch.name}</Text>
                       <Text type="secondary" style={{ fontSize: 12 }} ellipsis>{ch.group}{ch.sources?.length > 1 && ` · ${ch.sources.length}源`}{prog && ` · ${prog.title}`}</Text>
                     </div>
                   </div>
@@ -184,7 +190,7 @@ export default function LiveView() {
           {/* Player + EPG */}
           <div style={{ flex: 1, minWidth: 0 }}>
             {currentChannel && currentSource?.url && !playerFailed ? (
-              <PlyrPlayer key={`${currentLiveChannelId}-${currentLiveSourceIndex}`} url={currentSource.url} onError={handlePlayerError} onReady={handlePlayerReady} style={{ borderRadius: 16, overflow: 'hidden' }} />
+              <PlyrPlayer key={`${currentLiveChannelId}-${currentLiveSourceIndex}`} url={livePlayUrl} onError={handlePlayerError} onReady={handlePlayerReady} style={{ borderRadius: 16, overflow: 'hidden' }} />
             ) : currentChannel && playerFailed ? (
               <div style={{ background: '#fff2f0', borderRadius: 16, aspectRatio: '16/9', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, border: '1px solid #ffccc7' }}>
                 <WarningOutlined style={{ fontSize: 40, color: '#ff4d4f' }} />
@@ -233,8 +239,8 @@ export default function LiveView() {
                 )}
 
                 {nextProgramme && (
-                  <div style={{ padding: '8px 12px', background: '#f0f5ff', borderRadius: 8, marginBottom: 12 }}>
-                    <Text style={{ fontSize: 13, color: '#1677ff' }}>下一档: {nextProgramme.title}</Text>
+                  <div style={{ padding: '8px 12px', background: '#f7f4ff', borderRadius: 8, marginBottom: 12 }}>
+                    <Text style={{ fontSize: 13, color: '#7c3aed' }}>下一档: {nextProgramme.title}</Text>
                     <Text type="secondary" style={{ fontSize: 12, marginLeft: 8 }}>{formatClock(nextProgramme.start)} - {formatClock(nextProgramme.end)}</Text>
                   </div>
                 )}
@@ -252,13 +258,13 @@ export default function LiveView() {
                   {visibleProgrammes.map((p, i) => {
                     const state = programmeState(p)
                     return (
-                      <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 12px', borderRadius: 10, background: state === 'live' ? '#f6ffed' : state === 'upcoming' ? '#f0f5ff' : '#fafafa', border: state === 'live' ? '1px solid #b7eb8f' : '1px solid transparent' }}>
+                      <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 12px', borderRadius: 10, background: state === 'live' ? '#f6ffed' : state === 'upcoming' ? '#f7f4ff' : '#fafafa', border: state === 'live' ? '1px solid #b7eb8f' : '1px solid transparent' }}>
                         <div style={{ width: 100, flexShrink: 0, textAlign: 'right' }}>
-                          <Text strong style={{ fontSize: 13, color: state === 'live' ? '#52c41a' : state === 'upcoming' ? '#1677ff' : '#999' }}>{formatClock(p.start)}</Text>
+                          <Text strong style={{ fontSize: 13, color: state === 'live' ? '#52c41a' : state === 'upcoming' ? '#7c3aed' : '#999' }}>{formatClock(p.start)}</Text>
                           <Text type="secondary" style={{ display: 'block', fontSize: 11 }}>{formatClock(p.end)}</Text>
                         </div>
                         <div style={{ flex: 1 }}>
-                          <Text style={{ fontSize: 13, fontWeight: state === 'live' ? 600 : 400, color: state === 'live' ? '#52c41a' : state === 'upcoming' ? '#1677ff' : '#666' }}>{p.title}</Text>
+                          <Text style={{ fontSize: 13, fontWeight: state === 'live' ? 600 : 400, color: state === 'live' ? '#52c41a' : state === 'upcoming' ? '#7c3aed' : '#666' }}>{p.title}</Text>
                           {p.desc && <Text type="secondary" style={{ display: 'block', fontSize: 12, marginTop: 2 }} ellipsis>{p.desc}</Text>}
                         </div>
                         <Tag color={state === 'live' ? 'success' : state === 'upcoming' ? 'processing' : 'default'} style={{ flexShrink: 0, borderRadius: 4, fontSize: 11 }}>
