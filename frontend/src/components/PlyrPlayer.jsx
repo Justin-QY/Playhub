@@ -106,7 +106,7 @@ const PlyrPlayer = forwardRef(({ url, poster, onTimeUpdate, onError, onReady, st
 
   return (
     <div style={{ width: '100%', background: '#000', borderRadius: 12, overflow: 'hidden', ...style }}>
-      <video ref={videoRef} poster={poster} style={{ width: '100%', display: 'block' }} playsInline crossOrigin="anonymous" />
+      <video ref={videoRef} poster={poster} style={{ width: '100%', display: 'block' }} playsInline />
     </div>
   )
 })

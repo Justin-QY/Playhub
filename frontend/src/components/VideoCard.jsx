@@ -15,7 +15,7 @@ export default function VideoCard({ video, onClick, style, index = 0 }) {
       ([entry]) => {
         if (entry.isIntersecting) { setVisible(true); observer.disconnect() }
       },
-      { rootMargin: '200px' }
+      { rootMargin: '120px' }
     )
     if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
@@ -38,19 +38,12 @@ export default function VideoCard({ video, onClick, style, index = 0 }) {
               <img
                 src={video.pic}
                 alt={video.name}
-                crossOrigin="anonymous"
+                loading="lazy"
+                decoding="async"
                 referrerPolicy="no-referrer"
                 style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover', display: 'block', opacity: loaded ? 1 : 0, transition: 'opacity 0.3s ease' }}
                 onLoad={() => setLoaded(true)}
-                onError={(e) => {
-                  // Try without crossOrigin if it fails
-                  if (e.target.crossOrigin) {
-                    e.target.crossOrigin = null
-                    e.target.src = video.pic
-                  } else {
-                    setError(true)
-                  }
-                }}
+                onError={() => setError(true)}
               />
             ) : null}
             {!loaded && !error && (
