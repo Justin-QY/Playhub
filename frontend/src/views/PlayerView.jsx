@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import PlyrPlayer from '../components/PlyrPlayer'
 import { useStore } from '../stores/useStore'
+import * as api from '../api'
+import { buildPlayableUrl } from '../utils'
 
 const { Text } = Typography
 
@@ -25,6 +27,9 @@ export default function PlayerView() {
   const vod = params.get('vod') || ''
   const isGroup = params.get('group') === '1'
   const seekTime = parseFloat(params.get('seek') || '0') || 0
+  const lineParam = params.get('line') || ''
+  const epIdx = Math.max(0, parseInt(params.get('idx') || '0', 10) || 0)
+  const triedParam = params.get('tried') || ''
 
   // M3U8 净化：开启后播放列表走服务端清洗，视频分片仍由浏览器直连源站
   const purifyEnabled = store.settings.m3u8Purify === true
@@ -41,25 +46,91 @@ export default function PlayerView() {
   const longPressTimer = useRef(null)
   const saveTimerRef = useRef(null)
   const seekedRef = useRef(false)
+  const switchingRef = useRef(false)
 
   const isDirectMedia = /\.(m3u8|mp4|flv|ts|mkv|webm|mov)(?:$|[?#])/i.test(videoUrl)
   const errorReason = isDirectMedia
     ? '视频加载失败，可能是源站限制、防盗链或资源已失效。'
     : '这个地址是网页/分享页，不是直接的视频流，网页播放器无法直接解析。'
 
-  // 12 秒内没有画面就给出明确提示，避免一直黑屏
+  // 当前线路失败时，自动尝试同一部剧的其他线路
+  const tryOtherLines = useCallback(async () => {
+    if (!source || !vod) return false
+    const st = useStore.getState()
+    let detail = st.currentDetail
+    if (!detail || String(detail.id) !== String(vod)) {
+      detail = await st.ensureDetail(source, vod)
+    }
+    const groups = detail?.playGroups || []
+    if (!groups.length) return false
+
+    const tried = triedParam ? triedParam.split(',').filter(Boolean) : []
+    const current = groups.findIndex((g) => g.flag === lineParam)
+    const order = groups
+      .map((_, i) => i)
+      .filter((i) => i !== current && !tried.includes(groups[i].flag))
+      .slice(0, 4)
+
+    for (const gi of order) {
+      const group = groups[gi]
+      if (!group?.episodes?.length) continue
+      const idx = Math.min(epIdx, group.episodes.length - 1)
+      const ep = group.episodes[idx]
+      if (!ep) continue
+      try {
+        const payload = await api.sourcePlay(source, group.flag, ep.id || ep.url)
+        const nextUrl = buildPlayableUrl(payload, ep.id || ep.url)
+        if (!nextUrl || nextUrl === videoUrl) continue
+        const q = new URLSearchParams({
+          url: nextUrl,
+          title,
+          ep: ep.name || episode,
+          source,
+          vod,
+          line: group.flag,
+          idx: String(idx),
+          seek: '0',
+        })
+        if (isGroup) q.set('group', '1')
+        q.set('tried', [...tried, group.flag].join(','))
+        navigate(`/player?${q.toString()}`, { replace: true })
+        return true
+      } catch {
+        // 继续尝试下一条线路
+      }
+    }
+    return false
+  }, [source, vod, lineParam, epIdx, title, episode, isGroup, navigate, videoUrl, triedParam])
+
+  const handleFatal = useCallback(async (msg) => {
+    if (switchingRef.current) return
+    switchingRef.current = true
+    setPlayState('switching')
+    setPlayError(msg)
+    let switched = false
+    try {
+      switched = await tryOtherLines()
+    } finally {
+      switchingRef.current = false
+    }
+    if (!switched) {
+      setPlayState('error')
+      setPlayError(`${msg} 已尝试其他线路，仍无法播放。`)
+    }
+  }, [tryOtherLines])
+
+  // 12 秒内没有画面就判定失败，并尝试自动换线路
   useEffect(() => {
     setPlayState('loading')
     setPlayError('')
     const timer = setTimeout(() => {
       const video = document.querySelector('video')
       if (!video || video.readyState < 2 || (!video.currentTime && video.paused)) {
-        setPlayState('error')
-        setPlayError(errorReason)
+        handleFatal(errorReason)
       }
     }, 12000)
     return () => clearTimeout(timer)
-  }, [playUrl, playerKey])
+  }, [playUrl, playerKey, handleFatal, errorReason])
 
   // Auto-seek to last position
   useEffect(() => {
@@ -208,8 +279,7 @@ export default function PlayerView() {
               onError={() => {
                 const video = document.querySelector('video')
                 if (!video || video.readyState < 2 || (!video.currentTime && video.paused)) {
-                  setPlayState('error')
-                  setPlayError(errorReason)
+                  handleFatal(errorReason)
                 }
               }}
             />
@@ -227,6 +297,17 @@ export default function PlayerView() {
                     该地址不是直接视频流，可能无法播放
                   </Text>
                 )}
+              </div>
+            )}
+
+            {playState === 'switching' && (
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 25, borderRadius: 12,
+                background: 'rgba(0,0,0,0.82)', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 12,
+              }}>
+                <Spin />
+                <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 14 }}>当前线路不可用，正在尝试其他线路…</Text>
               </div>
             )}
 
