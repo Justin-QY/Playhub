@@ -1,4 +1,4 @@
-import{j as e,m as F}from"./motion-vendor-CUe1PNTK.js";import{Z as p,a0 as oe,B as v,H as J,x as Q,X as ye,W as j,T as de,e as je,D as H,S as ce,z as X,E as pe,J as xe,Q as ve}from"./antd-vendor-DdsopS_A.js";import{b as be,c as Re}from"./react-vendor-fNOISY54.js";import{u as ke,s as Se,b as Ue,a as Ce}from"./index-DV9XMcJw.js";const{Title:N,Text:$,Paragraph:he}=ye;async function me(u,S){var f,h,m,y;const a=`你是一个URL清理助手。请分析以下播放地址，去掉所有无关参数和路径，只保留最核心的可以直接播放的视频URL。
+import{j as e,m as F}from"./motion-vendor-Dql9FVH8.js";import{Z as p,a0 as oe,B as v,H as J,x as Q,X as ye,W as j,T as de,e as je,D as H,S as ce,z as X,E as pe,J as xe,Q as ve}from"./antd-vendor-qXOTLl0O.js";import{b as be,c as Re}from"./react-vendor-CNrrHS1f.js";import{u as ke,s as Se,b as Ue,a as Ce}from"./index-C6RHkzKX.js";const{Title:N,Text:$,Paragraph:he}=ye;async function me(u,S){var f,h,m,y;const a=`你是一个URL清理助手。请分析以下播放地址，去掉所有无关参数和路径，只保留最核心的可以直接播放的视频URL。
 
 规则：
 1. 如果URL本身就简洁且可播放（如 .m3u8 .mp4 结尾），直接返回

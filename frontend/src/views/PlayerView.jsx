@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Button, Typography } from 'antd'
-import { ArrowLeftOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { Button, Typography, Spin, Space } from 'antd'
+import { ArrowLeftOutlined, InfoCircleOutlined, ReloadOutlined, ExportOutlined, WarningOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import PlyrPlayer from '../components/PlyrPlayer'
@@ -36,9 +36,30 @@ export default function PlayerView() {
 
   const [speedBoost, setSpeedBoost] = useState(false)
   const [playerKey, setPlayerKey] = useState(0)
+  const [playState, setPlayState] = useState('loading')
+  const [playError, setPlayError] = useState('')
   const longPressTimer = useRef(null)
   const saveTimerRef = useRef(null)
   const seekedRef = useRef(false)
+
+  const isDirectMedia = /\.(m3u8|mp4|flv|ts|mkv|webm|mov)(?:$|[?#])/i.test(videoUrl)
+  const errorReason = isDirectMedia
+    ? '视频加载失败，可能是源站限制、防盗链或资源已失效。'
+    : '这个地址是网页/分享页，不是直接的视频流，网页播放器无法直接解析。'
+
+  // 12 秒内没有画面就给出明确提示，避免一直黑屏
+  useEffect(() => {
+    setPlayState('loading')
+    setPlayError('')
+    const timer = setTimeout(() => {
+      const video = document.querySelector('video')
+      if (!video || video.readyState < 2 || (!video.currentTime && video.paused)) {
+        setPlayState('error')
+        setPlayError(errorReason)
+      }
+    }, 12000)
+    return () => clearTimeout(timer)
+  }, [playUrl, playerKey])
 
   // Auto-seek to last position
   useEffect(() => {
@@ -183,7 +204,60 @@ export default function PlayerView() {
               key={playerKey}
               url={playUrl}
               style={{ borderRadius: 12, overflow: 'hidden' }}
+              onReady={() => { setPlayState('playing'); setPlayError('') }}
+              onError={() => {
+                const video = document.querySelector('video')
+                if (!video || video.readyState < 2 || (!video.currentTime && video.paused)) {
+                  setPlayState('error')
+                  setPlayError(errorReason)
+                }
+              }}
             />
+
+            {playState === 'loading' && (
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 20, borderRadius: 12,
+                background: 'rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 10, pointerEvents: 'none',
+              }}>
+                <Spin />
+                <Text style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13 }}>正在加载…</Text>
+                {!isDirectMedia && (
+                  <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12 }}>
+                    该地址不是直接视频流，可能无法播放
+                  </Text>
+                )}
+              </div>
+            )}
+
+            {playState === 'error' && (
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 30, borderRadius: 12,
+                background: 'rgba(0,0,0,0.88)', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', padding: 20,
+              }}>
+                <div style={{ maxWidth: 440, textAlign: 'center' }}>
+                  <WarningOutlined style={{ fontSize: 36, color: '#faad14', marginBottom: 10 }} />
+                  <div style={{ color: '#fff', fontSize: 16, fontWeight: 600, marginBottom: 8 }}>无法播放此资源</div>
+                  <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, lineHeight: 1.7, marginBottom: 18 }}>
+                    {playError}
+                  </div>
+                  <Space wrap style={{ justifyContent: 'center' }}>
+                    <Button
+                      type="primary"
+                      icon={<ReloadOutlined />}
+                      onClick={() => { setPlayState('loading'); setPlayError(''); setPlayerKey((k) => k + 1) }}
+                    >
+                      重试
+                    </Button>
+                    <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>换线路</Button>
+                    <Button icon={<ExportOutlined />} onClick={() => window.open(videoUrl, '_blank', 'noopener')}>
+                      浏览器打开
+                    </Button>
+                  </Space>
+                </div>
+              </div>
+            )}
             {speedBoost && (
               <div style={{
                 position: 'absolute',
